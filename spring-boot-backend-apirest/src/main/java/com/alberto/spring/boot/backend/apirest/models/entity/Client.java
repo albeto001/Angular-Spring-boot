@@ -1,5 +1,7 @@
 package com.alberto.spring.boot.backend.apirest.models.entity;
 
+import org.springframework.lang.NonNull;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,7 +31,7 @@ public class Client implements Serializable {
 	private String name;
 	
 	private String surname;
-	
+
 	private String email;
 	
 	@Column(name = "created_at")
