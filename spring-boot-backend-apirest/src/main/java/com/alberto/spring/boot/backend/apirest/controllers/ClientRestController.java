@@ -23,6 +23,7 @@ public class ClientRestController {
 
     @GetMapping("/clients")
     public List<Client> index(){
+        
         List<Client> clients = clientService.findAll();
         return clients;
     }
