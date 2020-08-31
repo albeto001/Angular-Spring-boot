@@ -1,7 +1,5 @@
 package com.alberto.spring.boot.backend.apirest.models.entity;
 
-import org.springframework.lang.NonNull;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +12,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="clients")
@@ -28,10 +29,17 @@ public class Client implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotEmpty
+	@Size(min=4, max=20)
+	@Column(nullable=false)
 	private String name;
 	
+	@NotEmpty
+	@Size(min=4, max=30)
 	private String surname;
 
+	@Email
+	@NotEmpty
 	private String email;
 	
 	@Column(name = "created_at")

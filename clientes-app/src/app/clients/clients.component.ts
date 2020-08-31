@@ -9,7 +9,7 @@ import swal from 'sweetalert2';
   styleUrls: []
 })
 export class ClientsComponent implements OnInit {
-  public clients: Client[];
+  public clients: Client[] = [];
   public componentName: string;
 
   constructor( private clientService: ClientService) {
@@ -42,7 +42,7 @@ export class ClientsComponent implements OnInit {
             this.clients = this.clients.filter(cli => cli !== client);
           },
           (error: any) => {
-            swal.fire('Error', error.error.message, 'warning');
+            swal.fire('Error', error.error.message, 'error');
           }
         );
       }

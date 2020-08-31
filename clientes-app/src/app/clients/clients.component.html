@@ -9,11 +9,15 @@
 </div>
 <hr>
 <div class="row">
-    <div class="col-12">
-        <div class="text-center alert alert-dark" *ngIf="clients.length == 0">
+    <div class="col-12" *ngIf="clients.length >= 1 then thenClients else elseClients"></div>
+    <ng-template #elseClients>
+        <div class="text-center alert alert-dark w-100">
             <h5>There are not Clients to show!</h5>
         </div>
-        <table class="table" *ngIf="clients.length > 0">
+    </ng-template>
+    <ng-template #thenClients>
+        <table class="table">
+            <caption>List of clients</caption>
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
@@ -21,12 +25,12 @@
                     <th scope="col">Surname</th>
                     <th scope="col">Email</th>
                     <th scope="col">Created at</th>
-                    <th sorted="col" colspan="3">Action</th>
+                    <th sorted="col" id="td-actions" colspan="3">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let client of clients">
-                    <td scope="row">{{ client.id }}</td>
+                    <td>{{ client.id }}</td>
                     <td>{{ client.name }}</td>
                     <td>{{ client.surname }}</td>
                     <td>{{ client.email }}</td>
@@ -44,5 +48,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </ng-template>
 </div>

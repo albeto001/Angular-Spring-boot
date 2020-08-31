@@ -38,8 +38,8 @@ export class FormComponent implements OnInit {
               this.client = client[0];
             },
             (error: any) => {
-              console.log(error);
-              swal.fire(error.status, error.error.message, 'warning');
+              console.error(error);
+              swal.fire(error.status, error.error.message, 'error');
               this.router.navigate(['/clients']);
             }
           );
