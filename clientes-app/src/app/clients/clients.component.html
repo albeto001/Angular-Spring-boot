@@ -17,7 +17,9 @@
     </ng-template>
     <ng-template #thenClients>
         <table class="table">
-            <caption>List of clients</caption>
+            <caption>
+                <app-paginator [pager]="pager" [callBack]="getPage"></app-paginator>
+            </caption>
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>

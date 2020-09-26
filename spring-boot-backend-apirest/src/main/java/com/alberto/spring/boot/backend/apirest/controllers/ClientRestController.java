@@ -4,6 +4,9 @@ import com.alberto.spring.boot.backend.apirest.models.entity.Client;
 import com.alberto.spring.boot.backend.apirest.models.services.IClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -27,9 +30,13 @@ public class ClientRestController {
 
     @GetMapping("/clients")
     public List<Client> index(){
-        
         List<Client> clients = clientService.findAll();
         return clients;
+    }
+
+    @GetMapping("/clients/page/{page}")
+    public Page<Client> page(@PathVariable Integer page){
+        return clientService.findAll(PageRequest.of(page, 2));
     }
 
     @GetMapping("/client/{id}")
@@ -66,7 +73,7 @@ public class ClientRestController {
 
     @PostMapping("/client")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ResponseEntity<?> add(@Valid @RequestBody Client client, BindingResult result){
+    public ResponseEntity<?> create(@Valid @RequestBody Client client, BindingResult result){
         Client newClient = null;
         Map<String, String> response = new HashMap<>();
         if(result.hasErrors()){

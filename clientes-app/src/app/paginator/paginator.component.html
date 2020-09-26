@@ -1,0 +1,19 @@
+<nav aria-label="Pages">
+    <ul class="pagination">
+        <li class="page-item {{ disablePrevious }}">
+            <a class="page-link btn" (click)="goTo(0)"> First </a>
+        </li>
+        <li class="page-item {{ disablePrevious }}">
+            <a class="page-link btn" (click)="goTo(currentPage - 1)">&laquo;</a>
+        </li>
+        <li *ngFor="let i of pagesToShow;" class="page-item" [ngClass]="{'active': i==currentPage}">
+            <a class="page-link btn" (click)="goTo(i)">{{ i+1 }}</a>
+        </li>
+        <li class="page-item {{ disableNext }}">
+            <a class="page-link btn" (click)="goTo(currentPage + 1)">&raquo;</a>
+        </li>
+        <li class="page-item {{ disableNext }}">
+            <a class="page-link btn" (click)="goTo(pager.totalPages -1 )"> Last </a>
+        </li>
+    </ul>
+</nav>

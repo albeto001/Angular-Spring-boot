@@ -11,6 +11,7 @@ import swal from 'sweetalert2';
 export class ClientsComponent implements OnInit {
   public clients: Client[] = [];
   public componentName: string;
+  public pager: any;
 
   constructor( private clientService: ClientService) {
     this.componentName = 'Clients';
@@ -18,14 +19,20 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     // this.clients = this.clientService.getClients();
-    this.clientService.getClients().subscribe(
+    this.getPage();
+  }
+
+  public getPage = (page: number = 0): void => {
+    this.clientService.getClients(page).subscribe(
       (result) => {
-        this.clients = result;
+        this.clients = result.content as Client[];
+        delete result.content;
+        this.pager = result;
       }
     );
   }
 
-  delete(client: Client): void{
+  public delete(client: Client): void{
     swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -40,6 +47,7 @@ export class ClientsComponent implements OnInit {
           () => {
             swal.fire('Deleted', `The Client '${client.name}' was deleted`, 'success');
             this.clients = this.clients.filter(cli => cli !== client);
+            this.updatePageDone();
           },
           (error: any) => {
             swal.fire('Error', error.error.message, 'error');
@@ -47,6 +55,18 @@ export class ClientsComponent implements OnInit {
         );
       }
     });
+  }
+
+  private updatePageDone(): void{
+    if (this.clients.length === 0){
+      if (!(this.pager.last && this.pager.first)){
+        if (this.pager.last){
+          this.getPage(this.pager.number - 1);
+        } else{
+          this.getPage(this.pager.number);
+        }
+      }
+    }
   }
 
 }

@@ -12,6 +12,7 @@ import { ClientService } from './clients/client.service';
 import { ErrorComponent } from './error/error.component';
 import { ROUTES } from './app.routing';
 import { FormComponent } from './clients/form/form.component';
+import { PagerComponent } from './paginator/paginator.component';
 
 const routes = ROUTES;
 @NgModule({
@@ -21,7 +22,8 @@ const routes = ROUTES;
     FooterComponent,
     ClientsComponent,
     ErrorComponent,
-    FormComponent
+    FormComponent,
+    PagerComponent
   ],
   imports: [
     BrowserModule,

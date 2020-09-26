@@ -57,7 +57,7 @@ export class FormComponent implements OnInit {
           swal.fire('Update', `The client ${this.client.name} has been updated`, 'success');
         },
         (error: any) => {
-          swal.fire(error.status, error.error.message, 'warning');
+          this.handleSaveError(error);
         }
       );
     }
@@ -68,10 +68,23 @@ export class FormComponent implements OnInit {
           swal.fire('New Client', `The client ${this.client.name} has been created`, 'success');
         },
         (error: any) => {
-          swal.fire(error.status, error.error.message, 'warning');
+          this.handleSaveError(error);
         }
       );
     }
+  }
+
+  private handleSaveError(error: any): void{
+    console.log(error);
+    let msg = '';
+    if (error.status === 400){
+      error.error.forEach(element => {
+        msg += element + '<hr>';
+      });
+    } else {
+      msg = error.message;
+    }
+    swal.fire(error.status, msg, 'error');
   }
 
 }
