@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -30,19 +31,18 @@ public class ClientRestController {
 
     @GetMapping("/clients")
     public List<Client> index(){
-        List<Client> clients = clientService.findAll();
-        return clients;
+        return  clientService.findAll();
     }
 
     @GetMapping("/clients/page/{page}")
     public Page<Client> page(@PathVariable Integer page){
-        return clientService.findAll(PageRequest.of(page, 2));
+        return clientService.findAll(PageRequest.of(page, 4));
     }
 
     @GetMapping("/client/{id}")
     public ResponseEntity<?> find(@PathVariable Long id){
-        List<Client> client = new ArrayList<Client>();
-        Map<String, String> response = new HashMap<>();
+        List<Client> client = new ArrayList<>();
+        Map<String, Object> response = new HashMap<>();
         try{
             client.add(clientService.findById(id));
         }catch (DataAccessException e){
@@ -95,7 +95,7 @@ public class ClientRestController {
 
     @PutMapping("/client/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Client client, BindingResult result, @PathVariable Long id){
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         Client clientToUpdate = null;
         if(result.hasErrors()){
             List<String> errors = new ArrayList<>();
@@ -114,6 +114,13 @@ public class ClientRestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<Client>(clientService.save(clientToUpdate), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/client/upload")
+    public ResponseEntity<?> upload(@RequestPart("file") MultipartFile file, @RequestParam("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
 

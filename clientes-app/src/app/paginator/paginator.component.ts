@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-paginator',
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.css']
 })
-export class PagerComponent implements OnInit {
+export class PagerComponent implements OnInit, OnChanges {
   @Input() pager: any;
   @Input() callBack: any;
   public disablePrevious = '';
@@ -16,9 +16,13 @@ export class PagerComponent implements OnInit {
 
   constructor() { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.pager.previousValue) {
+      this.updatePager();
+    }
+  }
+
   ngOnInit(): void {
-    this.pagesNumber = (this.pager.totalPages < this.pagesNumber) ? this.pager.totalPages : this.pagesNumber;
-    this.currentPage = this.pager.number;
     this.updatePager();
   }
 
@@ -28,7 +32,9 @@ export class PagerComponent implements OnInit {
     this.updatePager();
   }
 
-  updatePager(): void {
+  private updatePager(): void {
+    this.pagesNumber = (this.pager.totalPages < this.pagesNumber) ? this.pager.totalPages : this.pagesNumber;
+    this.currentPage = this.pager.number;
     const pages = [];
     const startOn = (this.currentPage <= this.pagesNumber - 1) ? 0 : this.currentPage - this.pagesNumber + 1;
     for ( let x = startOn; x < this.pagesNumber + startOn; x++){
