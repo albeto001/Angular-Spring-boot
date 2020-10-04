@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +121,14 @@ public class ClientRestController {
     @PostMapping("/client/upload")
     public ResponseEntity<?> upload(@RequestPart("file") MultipartFile file, @RequestParam("id") Long id) {
         Map<String, Object> response = new HashMap<>();
-
+        if (!file.isEmpty()) {
+            Client client = clientService.findById(id);
+            String fileName = file.getOriginalFilename();
+            String fileExtension = file.getContentType();
+            Path currentRelativePath = Paths.get("");
+            String currentPath = ((Path) currentRelativePath).toAbsolutePath().toString();
+            System.out.println(currentPath);
+        }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 

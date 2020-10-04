@@ -46,8 +46,16 @@ public class Client implements Serializable {
 	@Column(name = "created_at")
 	@Temporal(TemporalType.DATE)
 	private Date createdAt;
-	
-	
+
+	@Column(length = 100)
+	private String image;
+
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
 	public Long getId() {
 		return id;
 	}
