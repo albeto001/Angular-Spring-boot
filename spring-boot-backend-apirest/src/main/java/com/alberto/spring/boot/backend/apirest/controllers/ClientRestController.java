@@ -3,10 +3,12 @@ package com.alberto.spring.boot.backend.apirest.controllers;
 import com.alberto.spring.boot.backend.apirest.models.entity.Client;
 import com.alberto.spring.boot.backend.apirest.models.services.IClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -152,6 +155,26 @@ public class ClientRestController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/client/uploads/{image}")
+    public ResponseEntity<?> getImage( @PathVariable String image) {
+        Map<String, Object> response = new HashMap<>();
+        Path filePath = Paths.get("uploads").resolve(image).toAbsolutePath();
+        Resource resource = null;
+        try{
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_GATEWAY);
+        }
+        if (!resource.exists() || !resource.isReadable()) {
+            response.put("error", "The required file is not available");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image + "\"");
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     private boolean deleteImageClient(Client client) {
