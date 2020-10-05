@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"*"})
@@ -62,6 +62,10 @@ public class ClientRestController {
     public ResponseEntity<?> delete(@PathVariable long id){
         Map<String, String> response = new HashMap<>();
         try {
+            Client clientToDelete = clientService.findById(id);
+            if (this.deleteImageClient(clientToDelete)) {
+               response.put("deletions", "There was deleted a previous image: " + clientToDelete.getImage());
+            }
             clientService.delete(id);
             response.put("message", id + " was deleted");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -123,14 +127,45 @@ public class ClientRestController {
         Map<String, Object> response = new HashMap<>();
         if (!file.isEmpty()) {
             Client client = clientService.findById(id);
-            String fileName = file.getOriginalFilename();
+            if(client == null) {
+                response.put("message", "The file could not be uploaded for the provided client");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+            if (this.deleteImageClient(client)) {
+                response.put("deletion", "There was deleted a previous image: " + client.getImage() );
+            }
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename().replace(" ", "_");
             String fileExtension = file.getContentType();
-            Path currentRelativePath = Paths.get("");
-            String currentPath = ((Path) currentRelativePath).toAbsolutePath().toString();
-            System.out.println(currentPath);
+            Path uploadsPath = Paths.get("uploads").resolve(fileName).toAbsolutePath();
+            try {
+                Files.copy(file.getInputStream(), uploadsPath);
+            } catch (IOException e) {
+                response.put("message", "Error uploading the file " + fileName);
+                response.put("error", e.getMessage() + ": " + e.getCause().getMessage());
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            client.setImage(fileName);
+            clientService.save(client);
+            response.put("client", client);
+        } else {
+            response.put("error", "the file input is empty");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    private boolean deleteImageClient(Client client) {
+        String image = client.getImage();
+        if (image != null && image.length() > 0 ) {
+            Path currentImagePath = Paths.get("uploads").resolve(image).toAbsolutePath();
+            File currentFile = currentImagePath.toFile();
+            if (currentFile.exists() && currentFile.canRead()) {
+                return currentFile.delete();
+            }
+        }
+        return false;
+    }
+
 
 
 }
