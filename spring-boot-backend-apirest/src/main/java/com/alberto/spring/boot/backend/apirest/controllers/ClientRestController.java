@@ -2,6 +2,8 @@ package com.alberto.spring.boot.backend.apirest.controllers;
 
 import com.alberto.spring.boot.backend.apirest.models.entity.Client;
 import com.alberto.spring.boot.backend.apirest.models.services.IClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -34,6 +36,8 @@ public class ClientRestController {
     @Autowired
     private IClientService clientService;
 
+    private final Logger log = LoggerFactory.getLogger(ClientRestController.class);
+
     @GetMapping("/clients")
     public List<Client> index(){
         return  clientService.findAll();
@@ -46,6 +50,7 @@ public class ClientRestController {
 
     @GetMapping("/client/{id}")
     public ResponseEntity<?> find(@PathVariable Long id){
+        log.info("Getting Client by Id");
         List<Client> client = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
         try{
