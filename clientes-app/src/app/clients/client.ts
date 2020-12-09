@@ -4,4 +4,5 @@ export class Client {
     public surname: string;
     public email: string;
     public createdAt: string;
+    public image: string;
 }

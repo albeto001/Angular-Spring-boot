@@ -74,4 +74,18 @@ export class ClientService {
       })
     );
   }
+
+  public uploadFile(file: File, id: number): Observable<Client> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('id', id.toString());
+    return this.http.post(`${this.urlEndPoint}/client/upload`, formData).pipe(
+      map((response: any) => response.client as Client),
+      catchError(e => {
+        console.error(e);
+        return throwError(e);
+      })
+    );
+
+  }
 }
